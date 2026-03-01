@@ -1,5 +1,35 @@
 @import url('./reset.css');
 
+
+/* ======================= MAIN CONTAINER STYLING ================== */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: #58271e;
+}
+
+/* ======================= RESULT INPUT STYLING ==================== */
+
 input[type="text"] {
     text-align: right;
+}
+
+/* ======================= CALCULATOR STYLING ====================== */
+
+.calculator {
+    display: flex;
+    background-color: tomato;
+}
+
+/* ======================= OPERATOR STYLING ======================== */
+
+.calculator .operators {
+    background-color: aqua;
+}
+
+/* ======================= NUMBER STYLING ========================== */
+
+.calculator .numbers {
+    display: flex;
 }
