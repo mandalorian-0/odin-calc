@@ -1,7 +1,7 @@
 const buttons = document.querySelectorAll("button")
 const inputField = document.querySelector("input")
 
-const operators = ["+", "-", "*", "/"]
+const OPERATORS = ["+", "-", "*", "/"]
 
 let result = null
 let first_num = null
@@ -53,7 +53,7 @@ for (let button of buttons) {
             makeOperations(operator, first_num, second_num)
             justMade = true
         }
-        else if (operators.includes(clickedButton)) {
+        else if (OPERATORS.includes(clickedButton)) {
             operator = clickedButton
 
             first_num = inputField.value
@@ -63,7 +63,7 @@ for (let button of buttons) {
             /* If next click button is not an operator after an operation
              have been made then we clear out the result and start fresh
              */
-            if (!operators.includes(clickedButton) && justMade){
+            if (!OPERATORS.includes(clickedButton) && justMade){
                 inputField.value = clickedButton
                 justMade = false
             }
