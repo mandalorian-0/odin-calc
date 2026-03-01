@@ -1,9 +1,27 @@
 @import url('./reset.css');
 
+:root {
+    --dark-blue: hsl(210, 24%, 16%);
+    --slate-gray: hsl(218, 17%, 91%);
+    --slate-white: hsl(228, 38%, 97%);
+    --green: #5cb85c;
+    --dark-orange: #d9534f;
+    --white: #fff;
 
+    --input-background: var(--dark-blue);
+    --operator-background: var(--slate-gray);
+    --number-background: var(--slate-white);
+    --equal-sign-background: var(--dark-orange);
+    --clear-sign-background: var(--green)
+
+
+}
 /* ======================= MAIN CONTAINER STYLING ================== */
 
-.container {
+
+/* ======================= CALCULATOR CONTAINER STYLING ============ */
+
+.calculator {
     display: flex;
     flex-direction: column;
     background-color: #58271e;
@@ -11,25 +29,25 @@
 
 /* ======================= RESULT INPUT STYLING ==================== */
 
-input[type="text"] {
+.calculator_result input[type="text"] {
     text-align: right;
+    font-size: calc(20 / 16 * 1rem);
+    width: 300px;
+    padding-block: 15px;
 }
 
-/* ======================= CALCULATOR STYLING ====================== */
+/* ======================= CALCULATOR BUTTON STYLING =============== */
 
-.calculator {
+.calculator_btn {
     display: flex;
+    flex-wrap: wrap;
+    width: 300px;
     background-color: tomato;
 }
 
-/* ======================= OPERATOR STYLING ======================== */
-
-.calculator .operators {
-    background-color: aqua;
-}
-
-/* ======================= NUMBER STYLING ========================== */
-
-.calculator .numbers {
-    display: flex;
+.calculator_btn button {
+    flex: 0 0 20%;
+    height: 60px;
+    border-radius: 0;
+    outline: 0;
 }
