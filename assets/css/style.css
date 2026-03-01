@@ -4,9 +4,9 @@
     --dark-blue: hsl(210, 24%, 16%);
     --slate-gray: hsl(218, 17%, 91%);
     --slate-white: hsl(228, 38%, 97%);
-    --green: #5cb85c;
-    --dark-orange: #d9534f;
-    --white: #fff;
+    --green: hsl(120, 39%, 54%);
+    --dark-orange: hsl(16, 94%, 61%);
+    --white: hsl(0, 0%, 100%);
 
     --input-background: var(--dark-blue);
     --operator-background: var(--slate-gray);
@@ -31,9 +31,12 @@
 
 .calculator_result input[type="text"] {
     text-align: right;
-    font-size: calc(20 / 16 * 1rem);
+    font-size: calc((18 / 16) * 1rem);
     width: 300px;
     padding-block: 15px;
+    background-color: var(--input-background);
+    color: var(--white);
+    border: none;
 }
 
 /* ======================= CALCULATOR BUTTON STYLING =============== */
@@ -48,6 +51,29 @@
 .calculator_btn button {
     flex: 0 0 20%;
     height: 60px;
-    border-radius: 0;
-    outline: 0;
+    border: none;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.calculator button:nth-child(5n) {
+    border-right: none;
+}
+
+.calculator_btn .calc_num {
+    background-color: var(--number-background);
+    /* border */
+}
+
+.calculator_btn .calc_op {
+    background-color: var(--operator-background);
+}
+
+.calculator_btn .calc_equal {
+    background-color: var(--equal-sign-background);
+}
+
+.calculator_btn .calc_clear {
+    background-color: var(--clear-sign-background);
 }
