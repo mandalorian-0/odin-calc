@@ -1,7 +1,12 @@
 const buttons = document.querySelectorAll("button")
 const inputField = document.querySelector("input")
 
-const OPERATORS = ["+", "-", "*", "/"]
+document.addEventListener('DOMContentLoaded', (e) => {
+    e.preventDefault()
+    inputField.value = 0
+})
+
+const OPERATORS = ["+", "-", "*", "/", "%"]
 
 let result = null
 let first_num = null
@@ -22,16 +27,24 @@ const mult = (first_num, second_num) => {
     return first_num * second_num
 }
 
-const div = (first_num, second_num) => {
+const mod_div = (sign, first_num, second_num) => {
+    let result = 0
+
     if(second_num === 0) {
-        updateField(inputField, "Division by Zero Error")
+        sign === "/" 
+        ? updateField(inputField, "Division by Zero Error")
+        : updateField(inputField, "Modulo by Zero Error")
         return false
     }
     else {
-        return first_num / second_num
+        result = sign === "/" 
+        ? result = first_num / second_num
+        : result = first_num % second_num
+        return result
     }
 
 }
+
 
 const updateField = (field, newValue) => {
     field.value = newValue 
@@ -57,7 +70,8 @@ const makeOperations = (operator, first_num, second_num = 0) => {
             updateField(inputField, result)
             break;
         case "/":
-            result = div(parseInt(first_num), parseInt(second_num))
+        case "%":
+            result = mod_div(operator, parseInt(first_num), parseInt(second_num))
             if (result !== false) updateField(inputField, result)
             break;
     
