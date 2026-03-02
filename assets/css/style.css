@@ -1,6 +1,28 @@
 @import url('./reset.css');
 
+/* roboto-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/roboto-v51-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* roboto-500 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../fonts/roboto-v51-latin-500.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+
 :root {
+
+    --main-font: 'Roboto';
+
     --dark-blue: hsl(210, 24%, 16%);
     --slate-gray: hsl(218, 17%, 91%);
     --slate-white: hsl(228, 38%, 97%);
@@ -16,27 +38,37 @@
 
 
 }
-/* ======================= MAIN CONTAINER STYLING ================== */
 
+body {
+    font-family: var(--main-font), Arial, Helvetica, sans-serif;
+}
+/* ======================= MAIN CONTAINER STYLING ================== */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
 /* ======================= CALCULATOR CONTAINER STYLING ============ */
 
 .calculator {
     display: flex;
     flex-direction: column;
-    background-color: #58271e;
 }
 
 /* ======================= RESULT INPUT STYLING ==================== */
 
 .calculator_result input[type="text"] {
-    text-align: right;
-    font-size: calc((18 / 16) * 1rem);
     width: 300px;
     padding-block: 15px;
     background-color: var(--input-background);
+    text-align: right;
+    font-size: calc((18 / 16) * 1rem);
     color: var(--white);
     border: none;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
 /* ======================= CALCULATOR BUTTON STYLING =============== */
@@ -63,7 +95,6 @@
 
 .calculator_btn .calc_num {
     background-color: var(--number-background);
-    /* border */
 }
 
 .calculator_btn .calc_op {
