@@ -11,7 +11,7 @@ let afterOperation = false;
 let afterClear = false;
 
 document.addEventListener("DOMContentLoaded", (event) => {
-  e.preventDefault();
+  event.preventDefault();
   inputField.value = 0;
 });
 
@@ -21,10 +21,12 @@ document.addEventListener("keydown", (event) => {
   inputField.focus();
   let keyPressed = event.key;
 
-  if (parseInt(keyPressed) || OPERATORS.includes(keyPressed)) {
+  if (
+    parseInt(keyPressed) ||
+    OPERATORS.includes(keyPressed) ||
+    keyPressed === "Enter"
+  ) {
     proceed(keyPressed);
-  } else {
-    console.log("else");
   }
 });
 
@@ -91,7 +93,7 @@ const makeOperations = (operator, first_num, second_num = 0) => {
 };
 
 const proceed = (key) => {
-  if (key === "=") {
+  if (key === "=" || key === "Enter") {
     second_num = inputField.value;
     makeOperations(operator, first_num, second_num);
     afterOperation = true;
