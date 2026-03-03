@@ -3,130 +3,246 @@ const inputField = document.querySelector("input");
 
 const OPERATORS = ["+", "-", "*", "/", "%"];
 const NUMBERS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+const SPECIALS = ["=", "AC", "⌫", "±", "M+", "MR", "MC"];
 const SYMBOLS = ["."];
+
 const ACCEPTED_INPUT = [...OPERATORS, ...NUMBERS, ...SYMBOLS];
 
 let result = null;
-let first_num = null;
-let second_num = null;
+let firstNum = null;
+let secondNum = null;
 let operator = null;
 let afterOperation = false;
-let afterClear = false;
-let justStarted = true;
+
+const operations = {
+  "+": (a, b) => a + b,
+  "-": (a, b) => a - b,
+  "*": (a, b) => a * b,
+  "/": (a, b) => (b === 0 ? null : a / b),
+  "%": (a, b) => (b === 0 ? null : a % b),
+};
 
 document.addEventListener("DOMContentLoaded", (event) => {
   event.preventDefault();
   inputField.value = 0;
+  inputField.focus();
 });
 
 document.addEventListener("keydown", (event) => {
   event.preventDefault();
 
-  inputField.focus();
-  let keyPressed = event.key;
+  const keyMap = {
+    Escape: "AC",
+    Backspace: "⌫",
+    Delete: "AC",
+    "*": "*",
+    "/": "/",
+    "+": "+",
+    "-": "-",
+    "%": "%",
+    Enter: "=",
+    "=": "=",
+    // n: "±", // Alt + n for negative
+    // m: "M+", // Alt + m for memory
+    // r: "MR", // Alt + r for memory recall
+    // c: "MC", // Alt + c for memory clear
+  };
 
-  if (ACCEPTED_INPUT.includes(keyPressed) || keyPressed === "Enter") {
-    proceed(keyPressed);
+  const mappedKey = keyMap[event.key] || event.key;
+
+  if (ACCEPTED_INPUT.includes(mappedKey) || SPECIALS.includes(mappedKey)) {
+    proceed(mappedKey);
   }
 });
 
-const add = (first_num, second_num) => {
-  return first_num + second_num;
-};
-
-const sub = (first_num, second_num) => {
-  return first_num - second_num;
-};
-
-const mult = (first_num, second_num) => {
-  return first_num * second_num;
-};
-
-const mod_div = (sign, first_num, second_num) => {
-  let result = 0;
-
-  if (second_num === 0) {
-    sign === "/"
-      ? updateField(inputField, "Division by Zero Error")
-      : updateField(inputField, "Modulo by Zero Error");
-    return false;
-  } else {
-    result =
-      sign === "/"
-        ? (result = first_num / second_num)
-        : (result = first_num % second_num);
-    return result;
-  }
-};
-
 const updateField = (field, newValue) => {
-  field.value = newValue;
+  if (typeof newValue === "number" && !isFinite(newValue)) {
+    field.value = "Error";
+    afterOperation = true;
+  } else {
+    field.value = newValue;
+  }
 };
 
 const clearField = (field) => {
   field.value = "";
 };
 
-const makeOperations = (operator, first_num, second_num = 0) => {
-  switch (operator) {
-    case "+":
-      result = add(parseFloat(first_num), parseFloat(second_num));
-      updateField(inputField, result);
-      break;
-    case "-":
-      result = sub(parseFloat(first_num), parseFloat(second_num));
-      updateField(inputField, result);
-      break;
-    case "*":
-      result = mult(parseFloat(first_num), parseFloat(second_num));
-      updateField(inputField, result);
-      break;
-    case "/":
-    case "%":
-      result = mod_div(operator, parseFloat(first_num), parseFloat(second_num));
-      if (result !== false) updateField(inputField, result);
-      break;
+const formatNumber = (num) => {
+  const maxDecimals = 10;
+  return parseFloat(num.toFixed(maxDecimals));
+};
 
-    default:
+const makeOperations = (operator, firstNum, secondNum = 0) => {
+  const num1 = parseFloat(firstNum);
+  const num2 = parseFloat(secondNum);
+
+  if (isNaN(num1) || isNaN(num2)) {
+    updateField(inputField, "Invalid Input");
+    afterOperation = true;
+    return false;
+  }
+
+  const operation = operations[operator];
+
+  if (!operation) {
+    console.error(`Unknown operator: ${operator}`);
+    return false;
+  }
+
+  const result = operation(num1, num2);
+
+  if (result === null) {
+    const errorMsg =
+      operator === "/" ? "Cannot divide by zero" : "Cannot modulo by zero";
+    updateField(inputField, errorMsg);
+    afterOperation = true;
+    return false;
+  }
+
+  if (!isFinite(result)) {
+    updateField(inputField, "Error");
+    afterOperation = true;
+    return false;
+  }
+
+  const formattedResult = parseFloat(result.toPrecision(12));
+  updateField(inputField, formattedResult);
+  afterOperation = true;
+  return formattedResult;
+};
+// Memory functions
+const handleMemory = (operation) => {
+  switch (operation) {
+    case "MC":
+      memory = 0;
+      break;
+    case "MR":
+      inputField.value = memory;
+      break;
+    case "M+":
+      memory += parseFloat(inputField.value) || 0;
+      break;
+    case "M-":
+      memory -= parseFloat(inputField.value) || 0;
       break;
   }
 };
 
-const proceed = (key) => {
-  if (key === "=" || key === "Enter") {
-    second_num = inputField.value;
-    makeOperations(operator, first_num, second_num);
-    afterOperation = true;
-  } else if (key === ".") {
-    if (!inputField.value.includes(key)) inputField.value += key;
-  } else if (key === "AC") {
-    clearField(inputField);
-    inputField.value = 0;
-    afterClear = true;
-  } else if (OPERATORS.includes(key)) {
-    operator = key;
+// Input handlers
+const handleNumber = (key) => {
+  if (afterOperation) {
+    inputField.value = key;
+    afterOperation = false;
+    return;
+  }
 
-    first_num = inputField.value;
-    clearField(inputField);
+  // Prevent leading zeros
+  if (inputField.value === "0" && key !== ".") {
+    inputField.value = key;
   } else {
-    /* If next click button is not an operator after an operation
-     have been made then we clear out the result and start fresh
-     */
-    if (!OPERATORS.includes(key) && afterOperation) {
-      inputField.value = key;
-      afterOperation = false;
-    } else {
-      if (afterClear) {
-        afterClear = false;
+    inputField.value += key;
+  }
+};
 
-        inputField.value += key;
-      } else {
-        inputField.value += key;
-      }
+const handleDecimal = () => {
+  if (!inputField.value.includes(".")) {
+    inputField.value = inputField.value === "" ? "0." : inputField.value + ".";
+  }
+};
+
+const handleBackspace = () => {
+  if (inputField.value.length > 1) {
+    inputField.value = inputField.value.slice(0, -1);
+  } else {
+    inputField.value = "0";
+  }
+};
+
+const handleClear = () => {
+  inputField.value = "0";
+  firstNum = null;
+  secondNum = null;
+  operator = null;
+  afterOperation = false;
+};
+
+const handleEquals = () => {
+  if (operator && firstNum !== null) {
+    secondNum = inputField.value;
+    const calcResult = makeOperations(operator, firstNum, secondNum);
+    if (calcResult !== false) {
+      firstNum = calcResult;
+      operator = null;
     }
   }
 };
 
+const handleOperator = (key) => {
+  if (operator !== null && !afterOperation) {
+    // Chain operations: 5 + 3 + 2 should calculate intermediate results
+    secondNum = inputField.value;
+    const calcResult = makeOperations(operator, firstNum, secondNum);
+    if (calcResult !== false) {
+      firstNum = calcResult;
+    }
+  } else {
+    firstNum = inputField.value;
+  }
+
+  operator = key;
+  afterOperation = true;
+};
+
+const toggleSign = () => {
+  if (inputField.value !== "0") {
+    inputField.value = (parseFloat(inputField.value) * -1).toString();
+  }
+};
+
+// Main proceed function
+const proceed = (key) => {
+  // Handle special cases first
+  if (key === "=" || key === "Enter") {
+    handleEquals();
+    return;
+  }
+
+  if (key === "AC") {
+    handleClear();
+    return;
+  }
+
+  if (key === "⌫") {
+    handleBackspace();
+    return;
+  }
+
+  if (key === "±") {
+    toggleSign();
+    return;
+  }
+
+  if (["M+", "M-", "MR", "MC"].includes(key)) {
+    handleMemory(key);
+    return;
+  }
+
+  if (key === ".") {
+    handleDecimal();
+    return;
+  }
+
+  if (OPERATORS.includes(key)) {
+    handleOperator(key);
+    return;
+  }
+
+  // Handle numbers
+  handleNumber(key);
+};
+
+// Button event listeners
 for (let button of buttons) {
   button.addEventListener("click", (event) => {
     event.preventDefault();
@@ -135,3 +251,25 @@ for (let button of buttons) {
     proceed(clickedButton);
   });
 }
+
+// Add some helpful constants
+const CONSTANTS = {
+  π: Math.PI,
+  e: Math.E,
+};
+
+// Optional: Add keyboard shortcuts display
+const displayShortcuts = () => {
+  console.log(`
+Calculator Keyboard Shortcuts:
+- Numbers: 0-9
+- Operators: +, -, *, /, %
+- Equals: Enter or =
+- Clear: Escape or Delete
+- Backspace: Backspace
+- Toggle Sign: Alt + n
+- Memory: Alt + m (M+), Alt + r (MR), Alt + c (MC)
+  `);
+};
+
+// displayShortcuts();
