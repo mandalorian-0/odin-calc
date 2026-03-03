@@ -4,7 +4,7 @@ const inputField = document.querySelector("input");
 const OPERATORS = ["+", "-", "*", "/", "%"];
 const NUMBERS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 const SYMBOLS = ["."];
-const ACCEPTED_INPUT = OPERATORS + NUMBERS + SYMBOLS;
+const ACCEPTED_INPUT = [...OPERATORS, ...NUMBERS, ...SYMBOLS];
 
 let result = null;
 let first_num = null;
@@ -12,6 +12,7 @@ let second_num = null;
 let operator = null;
 let afterOperation = false;
 let afterClear = false;
+let justStarted = true;
 
 document.addEventListener("DOMContentLoaded", (event) => {
   event.preventDefault();
@@ -127,10 +128,10 @@ const proceed = (key) => {
 };
 
 for (let button of buttons) {
-  button.addEventListener("click", (e) => {
-    e.preventDefault();
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
 
-    let clickedButton = e.target.textContent;
+    let clickedButton = event.target.textContent;
     proceed(clickedButton);
   });
 }
