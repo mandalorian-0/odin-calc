@@ -2,6 +2,9 @@ const buttons = document.querySelectorAll("button");
 const inputField = document.querySelector("input");
 
 const OPERATORS = ["+", "-", "*", "/", "%"];
+const NUMBERS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+const SYMBOLS = ["."];
+const ACCEPTED_INPUT = OPERATORS + NUMBERS + SYMBOLS;
 
 let result = null;
 let first_num = null;
@@ -21,11 +24,7 @@ document.addEventListener("keydown", (event) => {
   inputField.focus();
   let keyPressed = event.key;
 
-  if (
-    parseInt(keyPressed) ||
-    OPERATORS.includes(keyPressed) ||
-    keyPressed === "Enter"
-  ) {
+  if (ACCEPTED_INPUT.includes(keyPressed) || keyPressed === "Enter") {
     proceed(keyPressed);
   }
 });
@@ -70,20 +69,20 @@ const clearField = (field) => {
 const makeOperations = (operator, first_num, second_num = 0) => {
   switch (operator) {
     case "+":
-      result = add(parseInt(first_num), parseInt(second_num));
+      result = add(parseFloat(first_num), parseFloat(second_num));
       updateField(inputField, result);
       break;
     case "-":
-      result = sub(parseInt(first_num), parseInt(second_num));
+      result = sub(parseFloat(first_num), parseFloat(second_num));
       updateField(inputField, result);
       break;
     case "*":
-      result = mult(parseInt(first_num), parseInt(second_num));
+      result = mult(parseFloat(first_num), parseFloat(second_num));
       updateField(inputField, result);
       break;
     case "/":
     case "%":
-      result = mod_div(operator, parseInt(first_num), parseInt(second_num));
+      result = mod_div(operator, parseFloat(first_num), parseFloat(second_num));
       if (result !== false) updateField(inputField, result);
       break;
 
@@ -97,6 +96,8 @@ const proceed = (key) => {
     second_num = inputField.value;
     makeOperations(operator, first_num, second_num);
     afterOperation = true;
+  } else if (key === ".") {
+    if (!inputField.value.includes(key)) inputField.value += key;
   } else if (key === "AC") {
     clearField(inputField);
     inputField.value = 0;
@@ -115,8 +116,9 @@ const proceed = (key) => {
       afterOperation = false;
     } else {
       if (afterClear) {
-        inputField.value = key;
         afterClear = false;
+
+        inputField.value += key;
       } else {
         inputField.value += key;
       }
